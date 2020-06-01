@@ -1,0 +1,8 @@
+.idea/
+.vscode/
+build/
+tmp/
+temp/
+
+backend/node_modules/
+frontend/node_modules/
