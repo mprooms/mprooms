@@ -1,3 +1,4 @@
+import * as cors from 'cors'
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 
@@ -11,7 +12,8 @@ createConnection().then(async connection => {
 
     const app =  express();
 
-    app.use(bodyParser.json())
+    app.use(cors());
+    app.use(bodyParser.json());
 
     app.get('/rooms', async (req: express.Request, res: express.Response) => {
         res.json(await roomRepo.find())
