@@ -1,57 +1,64 @@
-<script>
-	const message = 'Learn Svelte';
-</script>
-
 <style>
-	:global(body) {
-		margin: 0;
-		font-family: Arial, Helvetica, sans-serif;
-	}
-	.App {
-		text-align: center;
-	}
-	.App-header {
-		background-color: #F9F6F6;
-		color: #333;
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		font-size: calc(10px + 2vmin);
-	}
-	.App-link {
-		color: #ff3e00;
-	}
-	.App-logo {
-		height: 40vmin;
-		pointer-events: none;
-		margin-bottom: 1.0rem;
-		animation: App-logo-spin infinite 1.6s ease-in-out alternate;
-	}
-	@keyframes App-logo-spin {
-		from {
-			transform: scale(1);
-		}
-		to {
-			transform: scale(1.06);
-		}
-	}
 </style>
 
+<script>
+	import moment from 'moment'
+
+	let reserverName = null;
+	let rooms = []
+	let reservations = []
+	let days = []
+
+	async function setup() {
+		const resRooms = await fetch('http://localhost:3000/rooms')
+		rooms = await resRooms.json()
+
+		// const resReservations = await fetch('http://localhost:3000/rooms')
+		// reservations = await resReservations.json()
+
+		const now = moment()
+		const then = now.clone().add(7, 'days')
+
+		while (now < then) {
+			days.push(now.format('YYYY-MM-DD'))
+			now.add(1, 'days')
+		}
+	}
+
+	async function bookNow(roomName, date) {
+		if (!reserverName) {
+			alert('reservername missing');
+			return;
+		}
+
+		await fetch(`http://localhost:3000/rooms/${roomName}/reservations`, {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({reserverName, date})
+		})
+	}
+
+	setup()
+</script>
+
 <div class="App">
-	<header class="App-header">
-		<img src="/logo.svg" class="App-logo" alt="logo" />
-		<p>
-			Edit <code>src/App.svelte</code> and save to reload.
-		</p>
-		<a
-			class="App-link"
-			href="https://svelte.dev"
-			target="_blank"
-			rel="noopener noreferrer"
-		>
-			{message}
-		</a>
-	</header>
+	<div>
+		<input type="text" bind:value={reserverName}>
+	</div>
+	<table>
+		<tr>
+			<th></th>
+			{#each rooms as room}
+				<td>{room.name}</td>
+			{/each}
+		</tr>
+		{#each days as day}
+			<tr>
+				<th>{day}</th>
+				{#each rooms as room}
+					<td><button on:click={bookNow(room.name, day)}>book now</button></td>
+				{/each}
+			</tr>
+		{/each}
+	</table>
 </div>
