@@ -18,7 +18,7 @@ createConnection().then(async connection => {
     });
 
     app.get('/reservations', async (req: express.Request, res: express.Response) => {
-        res.json(await reservationRepo.find())
+        res.json(await reservationRepo.find({relations: ['room']}))
     });
 
     app.post('/rooms/:roomId/reservations', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
