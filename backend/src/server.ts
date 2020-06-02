@@ -1,8 +1,9 @@
+import * as moment from 'moment';
 import * as cors from 'cors'
 import * as express from 'express'
 import * as bodyParser from 'body-parser'
 
-import {createConnection} from 'typeorm';
+import {createConnection, MoreThanOrEqual} from 'typeorm';
 import { Room } from './entity/Room';
 import { Reservation } from './entity/Reservation';
 
@@ -20,11 +21,21 @@ createConnection().then(async connection => {
     });
 
     app.get('/reservations', async (req: express.Request, res: express.Response) => {
-        res.json(await reservationRepo.find({relations: ['room']}))
+        const today = moment().format('YYYY-MM-DD');
+        const reservations = await reservationRepo.find({
+            where: { date: MoreThanOrEqual(today)},
+            relations: ['room']
+        });
+
+        res.json(reservations)
     });
 
     app.post('/rooms/:roomId/reservations', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const {date, reserverName} = req.body;
+
+        if (!date || !reserverName) {
+            return next(new Error('400 - bad request'));
+        }
 
         const room = await roomRepo.findOne({name: req.params.roomId});
         if (!room) {
@@ -55,6 +66,8 @@ createConnection().then(async connection => {
     })
 
     app.use((error, req, res, next) => {
+        console.log(req)
+
         res.status(500).end(error.message)
     })
 

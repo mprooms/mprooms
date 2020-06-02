@@ -1,62 +1,34 @@
-<style>
-</style>
-
 <script>
-	import moment from 'moment'
+	import roomsState from './state/rooms'
+	import userState from './state/user'
+	import daysState from './state/days'
 
-	let reserverName = null;
-	let rooms = []
-	let reservations = []
-	let days = []
-
-	async function setup() {
-		const resRooms = await fetch('http://localhost:3000/rooms')
-		rooms = await resRooms.json()
-
-		// const resReservations = await fetch('http://localhost:3000/rooms')
-		// reservations = await resReservations.json()
-
-		const now = moment()
-		const then = now.clone().add(7, 'days')
-
-		while (now < then) {
-			days.push(now.format('YYYY-MM-DD'))
-			now.add(1, 'days')
-		}
-	}
-
-	async function bookNow(roomName, date) {
-		if (!reserverName) {
-			alert('reservername missing');
-			return;
-		}
-
-		await fetch(`http://localhost:3000/rooms/${roomName}/reservations`, {
-			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({reserverName, date})
-		})
-	}
-
-	setup()
+	import Reservations from './Reservations'
 </script>
 
 <div class="App">
 	<div>
-		<input type="text" bind:value={reserverName}>
+		<input type="text" 
+			placeholder="enter name here" 
+			on:keyup={e => userState.setName(e.target.value)}
+			value={$userState.name}
+		/>
 	</div>
+
 	<table>
 		<tr>
 			<th></th>
-			{#each rooms as room}
+			{#each $roomsState as room}
 				<td>{room.name}</td>
 			{/each}
 		</tr>
-		{#each days as day}
+		{#each $daysState as day}
 			<tr>
 				<th>{day}</th>
-				{#each rooms as room}
-					<td><button on:click={bookNow(room.name, day)}>book now</button></td>
+				{#each $roomsState as room}
+					<td>
+						<Reservations day={day} room={room} />
+					</td>
 				{/each}
 			</tr>
 		{/each}

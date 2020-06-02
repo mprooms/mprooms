@@ -1,10 +1,12 @@
+import roomsState from './state/rooms'
+import reservationsState from './state/reservations'
+
 import App from "./App.svelte";
 
-var app = new App({
-  target: document.body,
-});
+roomsState.load()
+reservationsState.load()
 
-export default app;
+export default new App({ target: document.body });
 
 // Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
 // Learn more: https://www.snowpack.dev/#hot-module-replacement
