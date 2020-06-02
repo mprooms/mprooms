@@ -1,10 +1,30 @@
 <style>
-    span {
-        margin-right: 10px
+    div {
+        width: 5rem;
+        height: 5rem;
+    }
+
+    div.available {
+        background-color: darkgreen;
+    }
+
+    div.middleCapacity {
+        background-color: orange
+    }
+
+    div.capacityReached {
+        background-color: red
+    }
+
+    .hasBookedThisRoom {
+        
     }
 </style>
 
 <script>
+    import Icon from 'svelte-awesome';
+    import { beer, refresh, comment, codeFork, camera, ban } from 'svelte-awesome/icons';
+
     import reservationsState from './state/reservations'
     import userState from './state/user'
 
@@ -24,34 +44,55 @@
     }
 
     function createReservation() {
-        if (!$userState.name) {
-            //TODO: don't use an alert...
-            return alert('name missing');
-        }
-
         reservationsState.createReservation(day, room.name, $userState.name)
     }
 
     let isBookable = false;
     let reservations = [];
+    let reserverNames = '';
+
+    let available = false;
+    let middleCapacity = false;
+    let capacityReached = false;
+    let hasBookedThisRoom = false;
+
     $: {
         reservations = getReservationForDayAndRoom($reservationsState);
         const userReservationsForDay = getUserReservationForDay($reservationsState, $userState.name)
 
         const validName = !!$userState.name
-        const hasBooked = userReservationsForDay.length > 0
-        const capacityReached = reservations.length >= room.capacity
+        const hasBookedAnywhere = userReservationsForDay.length > 0
+        hasBookedThisRoom = reservations.find(reservation => reservation.reserverName === $userState.name)
 
-        isBookable = validName && !hasBooked && !capacityReached
+        available = reservations.length === 0
+        middleCapacity = reservations.length > 0 && reservations.length < room.capacity
+        capacityReached = reservations.length >= room.capacity
+
+        isBookable = validName && !hasBookedAnywhere && !capacityReached
     }
 </script>
 
-<div>
-    {#each reservations as reservation}
-        <span>{reservation.reserverName}</span>
-    {/each}
-    
-    <button on:click={createReservation} disabled={!isBookable}>
-        book now!
-    </button>
+<div 
+    title={reservations.map(reservation => reservation.reserverName).join(', ')}
+    class:available={available} 
+    class:middleCapacity={middleCapacity} 
+    class:capacityReached={capacityReached}
+    class:hasBookedThisRoom={hasBookedThisRoom}
+>
+   
+    <!-- <ul>
+        {#each reservations as reservation}
+            <li>{reservation.reserverName}</li>
+        {/each}
+    </ul> -->
+
+    {#if isBookable}
+        <button on:click={createReservation} disabled={!isBookable}>
+            ✔️
+        </button>
+    {:else if hasBookedThisRoom}
+        <button on:click={createReservation} disabled={!isBookable}>
+            ❌
+        </button>
+    {/if}
 </div>

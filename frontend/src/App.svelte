@@ -1,3 +1,10 @@
+<style>
+	#app {
+		width: 80%;
+		margin: 0 auto;
+	}
+</style>
+
 <script>
 	import roomsState from './state/rooms'
 	import userState from './state/user'
@@ -6,7 +13,7 @@
 	import Reservations from './Reservations'
 </script>
 
-<div class="App">
+<div id="app">
 	<div>
 		<input type="text" 
 			placeholder="enter name here" 
@@ -18,14 +25,14 @@
 	<table>
 		<tr>
 			<th></th>
-			{#each $roomsState as room}
-				<td>{room.name}</td>
+			{#each $daysState as day}
+				<td>{day}</td>
 			{/each}
 		</tr>
-		{#each $daysState as day}
+		{#each $roomsState as room}
 			<tr>
-				<th>{day}</th>
-				{#each $roomsState as room}
+				<th>Room {room.name}</th>
+				{#each $daysState as day}
 					<td>
 						<Reservations day={day} room={room} />
 					</td>
