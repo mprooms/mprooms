@@ -66,8 +66,6 @@ createConnection().then(async connection => {
     })
 
     app.use((error, req, res, next) => {
-        console.log(req)
-
         res.status(500).end(error.message)
     })
 
