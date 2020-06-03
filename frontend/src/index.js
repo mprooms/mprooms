@@ -6,6 +6,8 @@ import App from "./App.svelte";
 roomsState.load()
 reservationsState.load()
 
+window.addEventListener('focus', () => reservationsState.load());
+
 export default new App({ target: document.body });
 
 // Hot Module Replacement (HMR) - Remove this snippet to remove HMR.
