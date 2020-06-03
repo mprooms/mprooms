@@ -65,6 +65,27 @@ createConnection().then(async connection => {
         res.status(201).end('reservation created');
     })
 
+    app.delete('/rooms/:roomId/reservations', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        const {date, reserverName} = req.body;
+
+        if (!date || !reserverName) {
+            return next(new Error('400 - bad request'));
+        }
+
+        const room = await roomRepo.findOne({name: req.params.roomId});
+        if (!room) {
+            return next(new Error('404 - room not found'));
+        }
+
+        const myReservation = reservationRepo.create({
+            date, reserverName, room
+        })
+
+        await reservationRepo.delete(myReservation)
+
+        res.status(201).end('reservation canceled');
+    })
+
     app.use((error, req, res, next) => {
         res.status(500).end(error.message)
     })

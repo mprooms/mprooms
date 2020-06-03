@@ -20,6 +20,17 @@ const reservationsStore = {
         //TODO: check result, show error message
 
         reservationsStore.load()
+    },
+    cancelReservation: async (date, roomName, reserverName) => {
+        await fetch(`http://localhost:3000/rooms/${roomName}/reservations`, {
+            method: 'delete',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({reserverName, date})
+        })
+
+        //TODO: check result, show error message
+
+        reservationsStore.load()
     }
 };
 

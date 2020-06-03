@@ -47,6 +47,10 @@
         reservationsState.createReservation(day, room.name, $userState.name)
     }
 
+    function cancelReservation() {
+        reservationsState.cancelReservation(day, room.name, $userState.name)
+    }
+
     let isBookable = false;
     let reservations = [];
     let reserverNames = '';
@@ -87,11 +91,11 @@
     </ul> -->
 
     {#if isBookable}
-        <button on:click={createReservation} disabled={!isBookable}>
+        <button on:click={createReservation}>
             ✔️
         </button>
     {:else if hasBookedThisRoom}
-        <button on:click={createReservation} disabled={!isBookable}>
+        <button on:click={cancelReservation}>
             ❌
         </button>
     {/if}
