@@ -1,0 +1,27 @@
+version: '3'
+services:
+    backend:
+        build:
+            context: backend
+            dockerfile: Dockerfile
+        volumes:
+            - ./db:/usr/src/app/db
+        ports:
+            - 3000:3000
+    frontend:
+        build:
+            context: frontend
+            dockerfile: Dockerfile
+        depends_on:
+            - backend
+        ports:
+            - 5000:5000
+    nginx:
+        build:
+            context: nginx
+            dockerfile: Dockerfile
+        ports:
+            - 8443:8443
+        depends_on:
+            - backend
+            - frontend
