@@ -22,79 +22,32 @@
 </style>
 
 <script>
-    import Icon from 'svelte-awesome';
-    import { beer, refresh, comment, codeFork, camera, ban } from 'svelte-awesome/icons';
-
     import reservationsState from './state/reservations'
     import userState from './state/user'
+    import matrixState from './state/matrix'
 
     export let day;
-    export let room;
+    export let roomName;
 
-    function getReservationForDayAndRoom(reservationsState) {
-        return reservationsState.filter(reservation => {
-            return reservation.date === day && reservation.room.name === room.name
-        })
-    }
+    let data = {}
 
-    function getUserReservationForDay(reservationsState, userName) {
-        return reservationsState.filter(reservation => {
-            return reservation.date === day && reservation.reserverName === userName
-        })
-    }
+    $: data = $matrixState[day][roomName]
 
     function createReservation() {
-        reservationsState.createReservation(day, room.name, $userState.name)
+        reservationsState.createReservation(day, roomName, $userState.name)
     }
 
     function cancelReservation() {
-        reservationsState.cancelReservation(day, room.name, $userState.name)
-    }
-
-    let isBookable = false;
-    let reservations = [];
-    let reserverNames = '';
-
-    let available = false;
-    let middleCapacity = false;
-    let capacityReached = false;
-    let hasBookedThisRoom = false;
-
-    $: {
-        reservations = getReservationForDayAndRoom($reservationsState);
-        const userReservationsForDay = getUserReservationForDay($reservationsState, $userState.name)
-
-        const validName = !!$userState.name
-        const hasBookedAnywhere = userReservationsForDay.length > 0
-        hasBookedThisRoom = reservations.find(reservation => reservation.reserverName === $userState.name)
-
-        available = reservations.length === 0
-        middleCapacity = reservations.length > 0 && reservations.length < room.capacity
-        capacityReached = reservations.length >= room.capacity
-
-        isBookable = validName && !hasBookedAnywhere && !capacityReached
+        reservationsState.cancelReservation(day, roomName, $userState.name)
     }
 </script>
 
-<div 
-    title={reservations.map(reservation => reservation.reserverName).join(', ')}
-    class:available={available} 
-    class:middleCapacity={middleCapacity} 
-    class:capacityReached={capacityReached}
-    class:hasBookedThisRoom={hasBookedThisRoom}
->
-   
-    <!-- <ul>
-        {#each reservations as reservation}
-            <li>{reservation.reserverName}</li>
-        {/each}
-    </ul> -->
-
-    {#if isBookable}
+<div title={data.reservers.join(', ')} class='{data.state}'>
+    {#if data.isBookable}
         <button on:click={createReservation}>
             ✔️
         </button>
-    {:else if hasBookedThisRoom}
+    {:else if data.hasBookedThisRoom}
         <button on:click={cancelReservation}>
             ❌
         </button>
