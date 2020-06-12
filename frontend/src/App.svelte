@@ -33,6 +33,7 @@
 	import daysState from './state/days'
 
 	import Reservations from './Reservations'
+	import Reservers from './Reservers'
 </script>
 
 <div id="app">
@@ -48,6 +49,12 @@
 			<th></th>
 			{#each $daysState as day}
 				<td>{day}</td>
+			{/each}
+		</tr>
+		<tr>
+			<th></th>
+			{#each $daysState as day}
+				<td><Reservers day={day} /></td>
 			{/each}
 		</tr>
 		{#each $roomsState as room}
