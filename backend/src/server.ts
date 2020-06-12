@@ -11,16 +11,16 @@ createConnection().then(async connection => {
     const roomRepo = connection.getRepository(Room)
     const reservationRepo = connection.getRepository(Reservation)
 
-    const app =  express();
+    const app = express();
 
     app.use(cors());
     app.use(bodyParser.json());
 
-    app.get('/rooms', async (req: express.Request, res: express.Response) => {
+    app.get('/api/rooms', async (req: express.Request, res: express.Response) => {
         res.json(await roomRepo.find())
     });
 
-    app.get('/reservations', async (req: express.Request, res: express.Response) => {
+    app.get('/api/reservations', async (req: express.Request, res: express.Response) => {
         const today = moment().format('YYYY-MM-DD');
         const reservations = await reservationRepo.find({
             where: { date: MoreThanOrEqual(today)},
@@ -30,7 +30,7 @@ createConnection().then(async connection => {
         res.json(reservations)
     });
 
-    app.post('/rooms/:roomId/reservations', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.post('/api/rooms/:roomId/reservations', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const {date, reserverName} = req.body;
 
         if (!date || !reserverName) {
@@ -65,7 +65,7 @@ createConnection().then(async connection => {
         res.status(201).end('reservation created');
     })
 
-    app.delete('/rooms/:roomId/reservations', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    app.delete('/api/rooms/:roomId/reservations', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         const {date, reserverName} = req.body;
 
         if (!date || !reserverName) {
