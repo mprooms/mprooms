@@ -3,7 +3,6 @@
 build/
 tmp/
 temp/
-letsencrypt/*
 db/*
 backend/*.sqlite
 
