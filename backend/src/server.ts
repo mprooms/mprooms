@@ -86,7 +86,7 @@ createConnection().then(async connection => {
         res.status(201).end('reservation canceled');
     })
 
-    app.use((error, req, res, next) => {
+    app.use((error, req, res, next) => { // eslint-disable-line no-unused-vars
         res.status(500).end(error.message)
     })
 
