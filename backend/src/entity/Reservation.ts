@@ -12,6 +12,6 @@ export class Reservation {
     @Column()
     date: string; // plz use the form YYYY-MM-DD
 
-    @ManyToOne(type => Room, room => room.reservations)
+    @ManyToOne(type => Room, room => room.reservations) // eslint-disable-line no-unused-vars
     room: Room;
 }

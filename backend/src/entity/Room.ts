@@ -12,6 +12,6 @@ export class Room {
     @Column()
     level: number;
 
-    @OneToMany(type => Reservation, reservation => reservation.room)
+    @OneToMany(type => Reservation, reservation => reservation.room) // eslint-disable-line no-unused-vars
     reservations: Reservation[];
 }
