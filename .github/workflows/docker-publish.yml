@@ -11,28 +11,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: {frontend, backend, nginx}
     steps:
       - uses: actions/checkout@v2
-
-      - name: Test backend image build
+      - name: Test ${{ matrix.image }} image build
         uses: docker/build-push-action@v1
         with:
-          path: backend
+          path: ${{ matrix.image }}
           push: false
-
-      - name: Test frontend image build
-        uses: docker/build-push-action@v1
-        with:
-          path: frontend
-          push: false
-
-      - name: Test nginx image build
-        uses: docker/build-push-action@v1
-        with:
-          path: nginx
-          push: false
-
-      # Future work: Run "docker-compose build" instead?
 
   push:
     # Ensure test job passes before pushing image.
