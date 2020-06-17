@@ -9,14 +9,21 @@ services:
             - "--api.insecure=false"
             - "--providers.docker=true"
             - "--entrypoints.websecure.address=:443"
+            - "--entrypoints.web.address=:80"
             - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
             - "--certificatesresolvers.myresolver.acme.email=${ACME_ADMIN_EMAIL}"
             - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
         ports:
             - "443:443"
+            - "80:80"
         volumes:
             - "letsencrypt:/letsencrypt"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        labels:
+            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+            - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+            - "traefik.http.routers.redirs.entrypoints=web"
+            - "traefik.http.routers.redirs.middlewares=redirect-to-https"
     backend:
         build:
             context: backend
