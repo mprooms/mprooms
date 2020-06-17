@@ -29,38 +29,22 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
+    strategy:
+      matrix:
+        image: [frontend, backend, nginx]
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build and push backend image
+      - name: Build and push ${{ matrix.image }} image
         uses: docker/build-push-action@v1
         with:
           username: mproomsci
           password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
           tag_with_ref: true
           tag_with_sha: true
-          repository: mprooms/backend
-          path: backend
-
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v1
-        with:
-          username: mproomsci
-          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
-          tag_with_ref: true
-          tag_with_sha: true
-          repository: mprooms/frontend
-          path: frontend
-
-      - name: Build and push nginx image
-        uses: docker/build-push-action@v1
-        with:
-          username: mproomsci
-          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
-          tag_with_ref: true
-          tag_with_sha: true
-          repository: mprooms/nginx
-          path: nginx
+          repository: mprooms/${{ matrix.image }}
+          path: ${{ matrix.image }}
 
   deploy:
     needs: push
