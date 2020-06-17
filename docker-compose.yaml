@@ -3,17 +3,17 @@ services:
     traefik:
         image: "traefik:v2.2"
         container_name: "traefik"
+        depends_on:
+            - gatekeeper
         command:
             - "--api.insecure=false"
             - "--providers.docker=true"
             - "--entrypoints.websecure.address=:443"
             - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-            - "--certificatesresolvers.myresolver.acme.email=heinz.vonberg@was.auchimmer"
+            - "--certificatesresolvers.myresolver.acme.email=${ACME_ADMIN_EMAIL}"
             - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-            - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
         ports:
             - "443:443"
-            - "80:80"
         volumes:
             - "letsencrypt:/letsencrypt"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -36,12 +36,26 @@ services:
         depends_on:
             - backend
             - frontend
+    gatekeeper:
+        image: keycloak/keycloak-gatekeeper
+        depends_on:
+            - nginx
+        command:
+            - "--client-id=${GATEKEEPER_CLIENT_ID}"
+            - "--client-secret=${GATEKEEPER_CLIENT_SECRET}"
+            - "--discovery-url=${GATEKEEPER_DISCOVERY_URL}"
+            - "--listen=0.0.0.0:3000"
+            - "--redirection-url=https://${HOST_FQDN}"
+            - "--upstream-url=http://nginx:8443"
+            - "--scopes=openid,profile,email"
+            - "--add-claims=name"
+            - "--add-claims=upn"
         labels:
-            - "traefik.http.routers.my-app.rule=Host(`mprooms-keycloak.iot.mp-labs.de`)"
+            - "traefik.http.routers.my-app.rule=Host(`${HOST_FQDN}`)"
             - "traefik.http.routers.my-app.entrypoints=websecure"
             - "traefik.http.routers.my-app.tls=true"
             - "traefik.http.routers.my-app.tls.certresolver=myresolver"
-            - "traefik.http.services.my-app.loadbalancer.server.port=8443"
+            - "traefik.http.services.my-app.loadbalancer.server.port=3000"
 
 volumes:
     letsencrypt:
