@@ -60,7 +60,7 @@ jobs:
           password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
           tag_with_ref: true
           repository: mprooms/frontend
-          path: backend
+          path: frontend
 
       - name: Build and push nginx image
         uses: docker/build-push-action@v1
