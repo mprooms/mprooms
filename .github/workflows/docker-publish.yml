@@ -42,7 +42,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME
+        # While testing, just pull an alpine image:
+        run: docker pull alpine && docker tag alpine $IMAGE_NAME
+        # run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
       - name: Log into registry
         run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u mprooms --password-stdin
