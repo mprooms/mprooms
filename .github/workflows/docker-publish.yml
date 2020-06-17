@@ -10,36 +10,40 @@ on:
 
 env:
   IMAGE_NAME: dummy
+  IF_PUSH: $(( if master then "true" else "false" ))
 
 jobs:
-  # Run tests.
-  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run tests
-        run: |
-          # No tests while testing :-)
-          exit 0
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            docker build . --file Dockerfile
-          fi
+      - name: Test backend image build
+        uses: docker/build-push-action@v1
+        with:
+          path: backend
+          push: false
 
-  # Push image to GitHub Packages.
-  # See also https://docs.docker.com/docker-hub/builds/
+      - name: Test frontend image build
+        uses: docker/build-push-action@v1
+        with:
+          path: frontend
+          push: false
+
+      - name: Test nginx image build
+        uses: docker/build-push-action@v1
+        with:
+          path: nginx
+          push: false
+
+      # Future work: Run "docker-compose build" instead?
+
   push:
     # Ensure test job passes before pushing image.
     needs: test
 
     runs-on: ubuntu-latest
-    # While testing, just always push:
-    # if: github.event_name == 'push'
+    if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v2
