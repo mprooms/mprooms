@@ -25,21 +25,15 @@ services:
             - "traefik.http.routers.redirs.entrypoints=web"
             - "traefik.http.routers.redirs.middlewares=redirect-to-https"
     backend:
-        build:
-            context: backend
-            dockerfile: Dockerfile
+        image: mprooms/backend:$MPROOMS_VERSION
         volumes:
             - database:/usr/src/app/db
     frontend:
-        build:
-            context: frontend
-            dockerfile: Dockerfile
+        image: mprooms/frontend:$MPROOMS_VERSION
         depends_on:
             - backend
     nginx:
-        build:
-            context: nginx
-            dockerfile: Dockerfile
+        image: mprooms/nginx:$MPROOMS_VERSION
         depends_on:
             - backend
             - frontend

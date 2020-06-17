@@ -73,3 +73,29 @@ jobs:
           tag_with_sha: true
           repository: mprooms/nginx
           path: nginx
+
+  deploy:
+    needs: push
+    runs-on: ubuntu-latest
+
+    # Do not run this for PRs
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy via SSH
+        run: |
+          umask 0077
+          mkdir ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY_MPROOMS_VM }}" > ~/.ssh/id_rsa
+          echo -e "Host ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}\nUser ubuntu\nStrictHostKeyChecking=no" > ~/.ssh/config
+
+          # Shut down existing deployment (if possible)
+          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c "'if [[ -f docker-compose.yaml ]]; then docker-compose down --remove-orphans; fi'"
+
+          # Copy YAML onto target host
+          scp docker-compose.yaml ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
+
+          # Deploy current version
+          export MPROOMS_VERSION=sha-${GITHUB_SHA::8}
+          ssh -o SendEnv=MPROOMS_VERSION ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} docker-compose up -d
