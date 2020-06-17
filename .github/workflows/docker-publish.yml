@@ -88,14 +88,14 @@ jobs:
           umask 0077
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY_MPROOMS_VM }}" > ~/.ssh/id_rsa
-          echo -e "Host mprooms-vm.iot.mp-labs.de\nUser ubuntu\nStrictHostKeyChecking=no" > ~/.ssh/config
+          echo -e "Host ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}\nUser ubuntu\nStrictHostKeyChecking=no" > ~/.ssh/config
 
           # Shut down existing deployment (if possible)
-          ssh mprooms-vm.iot.mp-labs.de bash -c "'if [[ -f docker-compose.yaml ]]; then docker-compose down --remove-orphans; fi'"
+          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c "'if [[ -f docker-compose.yaml ]]; then docker-compose down --remove-orphans; fi'"
 
           # Copy YAML onto target host
-          scp docker-compose.yaml mprooms-vm.iot.mp-labs.de:
+          scp docker-compose.yaml ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
 
           # Deploy current version
           export MPROOMS_VERSION=sha-${GITHUB_SHA::8}
-          ssh -o SendEnv=MPROOMS_VERSION mprooms-vm.iot.mp-labs.de docker-compose up -d
+          ssh -o SendEnv=MPROOMS_VERSION ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} docker-compose up -d
