@@ -8,10 +8,6 @@ on:
   # Run tests for any PRs.
   pull_request:
 
-env:
-  IMAGE_NAME: dummy
-  IF_PUSH: $(( if master then "true" else "false" ))
-
 jobs:
   test:
     runs-on: ubuntu-latest
