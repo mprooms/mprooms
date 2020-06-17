@@ -36,7 +36,8 @@ jobs:
     needs: test
 
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    # While testing, just always push:
+    # if: github.event_name == 'push'
 
     steps:
       - uses: actions/checkout@v2
