@@ -18,21 +18,15 @@ services:
             - "letsencrypt:/letsencrypt"
             - "/var/run/docker.sock:/var/run/docker.sock:ro"
     backend:
-        build:
-            context: backend
-            dockerfile: Dockerfile
+        image: mprooms/backend:$MPROOMS_VERSION
         volumes:
             - database:/usr/src/app/db
     frontend:
-        build:
-            context: frontend
-            dockerfile: Dockerfile
+        image: mprooms/frontend:$MPROOMS_VERSION
         depends_on:
             - backend
     nginx:
-        build:
-            context: nginx
-            dockerfile: Dockerfile
+        image: mprooms/nginx:$MPROOMS_VERSION
         depends_on:
             - backend
             - frontend
