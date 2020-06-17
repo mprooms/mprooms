@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-nginx-config
+  labels:
+    app.kubernetes.io/name: {{ .Release.Name }}-nginx-config
+data:
+  nginx.conf: |-
+    events {}
+
+    http {
+        server {
+            listen 8443;
+            listen [::]:8443;
+    
+            server_name _;
+    
+            location /api/ {
+                proxy_pass http://localhost:3000/api/;
+            }
+    
+            location / {
+                proxy_pass http://localhost:5000/;
+            }
+        }
+    }
