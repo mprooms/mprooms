@@ -9,7 +9,7 @@ on:
   pull_request:
 
 env:
-  GITHUB_SHORTSHA: ${GITHUB_SHA::7}
+  SHORTSHA: ${GITHUB_SHA::7}
 
 jobs:
   test:
@@ -43,7 +43,7 @@ jobs:
         # Pull the image that was pushed by the previous job (different
         # builder!) so that we can use it as a cache for the subsequent build.
         run: |
-          docker pull mprooms/${{ matrix.image }}:$GITHUB_SHORTSHA
+          docker pull mprooms/${{ matrix.image }}:$SHORTSHA
 
       - name: Build and push ${{ matrix.image }} image
         uses: docker/build-push-action@v1
@@ -83,7 +83,7 @@ jobs:
 
           # Prepare .env file for docker-compose on target host
           cat > .env <<EOF
-          MPROOMS_VERSION=sha-$GITHUB_SHORTSHA
+          MPROOMS_VERSION=sha-$SHORTSHA
           GATEKEEPER_CLIENT_ID=${{ secrets.GATEKEEPER_CLIENT_ID }}
           GATEKEEPER_CLIENT_SECRET=${{ secrets.GATEKEEPER_CLIENT_SECRET }}
           GATEKEEPER_DISCOVERY_URL=${{ secrets.GATEKEEPER_DISCOVERY_URL }}
