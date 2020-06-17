@@ -8,4 +8,4 @@ $ cd rooms/backend && npm i && npm start
 $ cd rooms/frontend && npm i && npm start
 ```
 
-Execute the last line in a seperate bash instance since both processes have to run in parallel.
+Execute the last line in a separate bash instance since both processes have to run in parallel.
