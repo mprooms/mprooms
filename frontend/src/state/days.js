@@ -7,7 +7,7 @@ export default readable([], (set) => {
 
     const days = []
     while (now < then) {
-        days.push(now.format('YYYY-MM-DD'))
+        days.push(now.format('ddd MM-DD'))
         now.add(1, 'days')
     }
 
