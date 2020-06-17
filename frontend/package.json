@@ -2,12 +2,16 @@
   "scripts": {
     "start": "snowpack dev",
     "build": "snowpack build",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint -s . --ext .js,.svelte"
   },
   "devDependencies": {
     "@snowpack/app-scripts-svelte": "^1.1.0",
     "@testing-library/jest-dom": "^5.5.0",
     "@testing-library/svelte": "^3.0.0",
+    "eslint": "^7.2.0",
+    "eslint-plugin-jest": "^23.13.2",
+    "eslint-plugin-svelte3": "^2.7.3",
     "jest": "^25.4.0",
     "snowpack": "^2.0.0",
     "svelte": "^3.21.0"
