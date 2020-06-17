@@ -1,0 +1,72 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - master
+
+  # Run tests for any PRs.
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Test backend image build
+        uses: docker/build-push-action@v1
+        with:
+          path: backend
+          push: false
+
+      - name: Test frontend image build
+        uses: docker/build-push-action@v1
+        with:
+          path: frontend
+          push: false
+
+      - name: Test nginx image build
+        uses: docker/build-push-action@v1
+        with:
+          path: nginx
+          push: false
+
+      # Future work: Run "docker-compose build" instead?
+
+  push:
+    # Ensure test job passes before pushing image.
+    needs: test
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v1
+        with:
+          username: mproomsci
+          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
+          tag_with_ref: true
+          repository: mprooms/backend
+          path: backend
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v1
+        with:
+          username: mproomsci
+          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
+          tag_with_ref: true
+          repository: mprooms/frontend
+          path: frontend
+
+      - name: Build and push nginx image
+        uses: docker/build-push-action@v1
+        with:
+          username: mproomsci
+          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
+          tag_with_ref: true
+          repository: mprooms/nginx
+          path: nginx
