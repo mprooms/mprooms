@@ -1,27 +1,63 @@
 version: '3'
 services:
-    backend:
-        build:
-            context: backend
-            dockerfile: Dockerfile
-        volumes:
-            - ./db:/usr/src/app/db
+    traefik:
+        image: "traefik:v2.2"
+        container_name: "traefik"
+        depends_on:
+            - gatekeeper
+        command:
+            - "--api.insecure=false"
+            - "--providers.docker=true"
+            - "--entrypoints.websecure.address=:443"
+            - "--entrypoints.web.address=:80"
+            - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+            - "--certificatesresolvers.myresolver.acme.email=${ACME_ADMIN_EMAIL}"
+            - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
         ports:
-            - 3000:3000
+            - "443:443"
+            - "80:80"
+        volumes:
+            - "letsencrypt:/letsencrypt"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+        labels:
+            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+            - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+            - "traefik.http.routers.redirs.entrypoints=web"
+            - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+    backend:
+        image: mprooms/backend:$MPROOMS_VERSION
+        volumes:
+            - database:/usr/src/app/db
     frontend:
-        build:
-            context: frontend
-            dockerfile: Dockerfile
+        image: mprooms/frontend:$MPROOMS_VERSION
         depends_on:
             - backend
-        ports:
-            - 5000:5000
     nginx:
-        build:
-            context: nginx
-            dockerfile: Dockerfile
-        ports:
-            - 8443:8443
+        image: mprooms/nginx:$MPROOMS_VERSION
         depends_on:
             - backend
             - frontend
+    gatekeeper:
+        image: keycloak/keycloak-gatekeeper
+        depends_on:
+            - nginx
+        command:
+            - "--client-id=${GATEKEEPER_CLIENT_ID}"
+            - "--client-secret=${GATEKEEPER_CLIENT_SECRET}"
+            - "--discovery-url=${GATEKEEPER_DISCOVERY_URL}"
+            - "--listen=0.0.0.0:3000"
+            - "--redirection-url=https://${HOST_FQDN}"
+            - "--upstream-url=http://nginx:8443"
+            - "--scopes=openid,profile,email"
+            - "--add-claims=name"
+            - "--add-claims=upn"
+        labels:
+            - "traefik.http.routers.my-app.rule=Host(`${HOST_FQDN}`)"
+            - "traefik.http.routers.my-app.entrypoints=websecure"
+            - "traefik.http.routers.my-app.tls=true"
+            - "traefik.http.routers.my-app.tls.certresolver=myresolver"
+            - "traefik.http.services.my-app.loadbalancer.server.port=3000"
+
+volumes:
+    letsencrypt:
+    database:
