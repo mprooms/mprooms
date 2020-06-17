@@ -85,13 +85,13 @@ jobs:
           scp docker-compose.yaml ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
 
           # Prepare .env file for docker-compose on target host
-          echo "
-             GATEKEEPER_CLIENT_ID=${{ secrets.GATEKEEPER_CLIENT_ID }} \
-             GATEKEEPER_CLIENT_SECRET=${{ secrets.GATEKEEPER_CLIENT_SECRET }} \
-             GATEKEEPER_DISCOVERY_URL=${{ secrets.GATEKEEPER_DISCOVERY_URL }} \
-             HOST_FQDN=${{ secrets.HOST_FQDN }} \
-             ACME_ADMIN_EMAIL=${{ secrets.ACME_ADMIN_EMAIL }} \
-             " > .env
+          cat > .env <<EOF
+          GATEKEEPER_CLIENT_ID=${{ secrets.GATEKEEPER_CLIENT_ID }}
+          GATEKEEPER_CLIENT_SECRET=${{ secrets.GATEKEEPER_CLIENT_SECRET }}
+          GATEKEEPER_DISCOVERY_URL=${{ secrets.GATEKEEPER_DISCOVERY_URL }}
+          HOST_FQDN=${{ secrets.HOST_FQDN }}
+          ACME_ADMIN_EMAIL=${{ secrets.ACME_ADMIN_EMAIL }}
+          EOF
           scp .env ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
 
           # Deploy current version
