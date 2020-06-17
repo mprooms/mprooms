@@ -43,11 +43,15 @@
 <div id="app">
 		<h1> MP Room Reservation System </h1>
 	<div>
+		<h2> Please enter your name: </h2>
 		<input type="text" 
-			placeholder="enter name here" 
+			placeholder="Name"
 			on:keyup={e => userState.setName(e.target.value)}
 			value={$userState.name}
 		/>
+		<div style ="
+			margin-bottom: 10px;
+		"/>
 	</div>
 	<table>
 		<tr>
