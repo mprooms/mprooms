@@ -97,4 +97,12 @@ jobs:
           scp docker-compose.yaml ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
 
           # Deploy current version
-          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c "MPROOMS_VERSION=sha-${GITHUB_SHA::8} docker-compose up -d"
+          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c " \
+            MPROOMS_VERSION=sha-${GITHUB_SHA::8} \
+            GATEKEEPER_CLIENT_ID=${{ secrets.GATEKEEPER_CLIENT_ID }} \
+            GATEKEEPER_CLIENT_SECRET=${{ secrets.GATEKEEPER_CLIENT_SECRET }} \
+            GATEKEEPER_DISCOVERY_URL=${{ secrets.GATEKEEPER_DISCOVERY_URL }} \
+            HOST_FQDN=${{ secrets.HOST_FQDN }} \
+            ACME_ADMIN_EMAIL=${{ secrets.ACME_ADMIN_EMAIL }} \
+            docker-compose up -d \
+            "
