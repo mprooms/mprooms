@@ -1,5 +1,22 @@
 version: '3'
 services:
+    traefik:
+        image: "traefik:v2.2"
+        container_name: "traefik"
+        command:
+            - "--api.insecure=false"
+            - "--providers.docker=true"
+            - "--entrypoints.websecure.address=:443"
+            - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+            - "--certificatesresolvers.myresolver.acme.email=heinz.vonberg@was.auchimmer"
+            - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+            - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+        ports:
+            - "443:443"
+            - "80:80"
+        volumes:
+            - "letsencrypt:/letsencrypt"
+            - "/var/run/docker.sock:/var/run/docker.sock:ro"
     backend:
         build:
             context: backend
@@ -25,3 +42,12 @@ services:
         depends_on:
             - backend
             - frontend
+        labels:
+            - "traefik.http.routers.my-app.rule=Host(`mprooms-keycloak.iot.mp-labs.de`)"
+            - "traefik.http.routers.my-app.entrypoints=websecure"
+            - "traefik.http.routers.my-app.tls=true"
+            - "traefik.http.routers.my-app.tls.certresolver=myresolver"
+            - "traefik.http.services.my-app.loadbalancer.server.port=8443"
+
+volumes:
+    letsencrypt:
