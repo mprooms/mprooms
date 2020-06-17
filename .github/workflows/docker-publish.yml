@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        image: {frontend, backend, nginx}
+        image: [frontend, backend, nginx]
     steps:
       - uses: actions/checkout@v2
       - name: Test ${{ matrix.image }} image build
