@@ -22,7 +22,7 @@ services:
             context: backend
             dockerfile: Dockerfile
         volumes:
-            - ./db:/usr/src/app/db
+            - database:/usr/src/app/db
     frontend:
         build:
             context: frontend
@@ -45,3 +45,4 @@ services:
 
 volumes:
     letsencrypt:
+    database:
