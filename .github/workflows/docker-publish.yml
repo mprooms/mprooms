@@ -69,7 +69,7 @@ jobs:
           echo VERSION=$VERSION
 
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-
+          docker push $IMAGE_ID:$VERSION
       # - name: Push to Docker Hub
         # uses: docker/build-push-action@v1
         # with:
