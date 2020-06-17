@@ -44,36 +44,29 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build image
-        # While testing, just pull an alpine image:
-        run: docker pull alpine && docker tag alpine $IMAGE_NAME
-        # run: docker build . --file Dockerfile --tag $IMAGE_NAME
+      - name: Build and push backend image
+        uses: docker/build-push-action@v1
+        with:
+          username: mproomsci
+          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
+          tag_with_ref: true
+          repository: mprooms/backend
+          path: backend
 
-      - name: Log into registry
-        run: echo "${{ secrets.DOCKER_MPROOMSCI_TOKEN }}" | docker login -u mproomsci --password-stdin
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v1
+        with:
+          username: mproomsci
+          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
+          tag_with_ref: true
+          repository: mprooms/frontend
+          path: backend
 
-      - name: Push image
-        run: |
-          IMAGE_ID=mprooms/$IMAGE_NAME
-
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
-
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
-      # - name: Push to Docker Hub
-        # uses: docker/build-push-action@v1
-        # with:
-          # username: mproomsci
-          # password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
-          # repository: mprooms/dummy
-          # tag_with_ref: true
+      - name: Build and push nginx image
+        uses: docker/build-push-action@v1
+        with:
+          username: mproomsci
+          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
+          tag_with_ref: true
+          repository: mprooms/nginx
+          path: nginx
