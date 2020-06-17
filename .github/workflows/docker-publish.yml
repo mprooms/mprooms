@@ -84,4 +84,4 @@ jobs:
           scp .env ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
 
           # Deploy current version
-          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c "docker-compose up -d"
+          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} docker-compose up -d
