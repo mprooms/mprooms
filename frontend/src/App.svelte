@@ -25,6 +25,10 @@
     td.capacityReached {
         background-color: red
     }
+
+	h1{
+		text-align:center;
+	}
 </style>
 
 <script>
@@ -37,6 +41,7 @@
 </script>
 
 <div id="app">
+		<h1> MP Room Reservation System </h1>
 	<div>
 		<input type="text" 
 			placeholder="enter name here" 
