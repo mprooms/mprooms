@@ -97,5 +97,4 @@ jobs:
           scp docker-compose.yaml ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
 
           # Deploy current version
-          export MPROOMS_VERSION=sha-${GITHUB_SHA::8}
-          ssh -o SendEnv=MPROOMS_VERSION ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} docker-compose up -d
+          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c "MPROOMS_VERSION=sha-${GITHUB_SHA::8} docker-compose up -d"
