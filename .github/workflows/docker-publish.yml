@@ -16,10 +16,17 @@ jobs:
         image: [frontend, backend, nginx]
     steps:
       - uses: actions/checkout@v2
+
+      - name: Pull existing image
+        # Pull the current image to use it as a potential cache source.
+        run: |
+          docker pull mprooms/${{ matrix.image }}:latest
+
       - name: Test ${{ matrix.image }} image build
         uses: docker/build-push-action@v1
         with:
           path: ${{ matrix.image }}
+          cache_froms: mprooms/${{ matrix.image }}:latest
           push: false
 
   push:
