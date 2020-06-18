@@ -77,7 +77,7 @@ jobs:
           umask 0077
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY_MPROOMS_VM }}" > ~/.ssh/id_rsa
-          echo -e "Host ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}\nUser ubuntu\nStrictHostKeyChecking=no" > ~/.ssh/config
+          echo -e "Host ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}\nUser ${{ secrets.MASTER_DEPLOYMENT_USERNAME }}\nStrictHostKeyChecking=no" > ~/.ssh/config
 
           # Shut down existing deployment (if possible)
           ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c "'if [[ -f docker-compose.yaml ]]; then docker-compose down --remove-orphans; fi'"
