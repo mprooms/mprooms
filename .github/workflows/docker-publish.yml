@@ -11,28 +11,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [frontend, backend, nginx]
     steps:
       - uses: actions/checkout@v2
-
-      - name: Test backend image build
+      - name: Test ${{ matrix.image }} image build
         uses: docker/build-push-action@v1
         with:
-          path: backend
+          path: ${{ matrix.image }}
           push: false
-
-      - name: Test frontend image build
-        uses: docker/build-push-action@v1
-        with:
-          path: frontend
-          push: false
-
-      - name: Test nginx image build
-        uses: docker/build-push-action@v1
-        with:
-          path: nginx
-          push: false
-
-      # Future work: Run "docker-compose build" instead?
 
   push:
     # Ensure test job passes before pushing image.
@@ -41,38 +29,29 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
 
+    strategy:
+      matrix:
+        image: [frontend, backend, nginx]
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build and push backend image
-        uses: docker/build-push-action@v1
-        with:
-          username: mproomsci
-          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
-          tag_with_ref: true
-          tag_with_sha: true
-          repository: mprooms/backend
-          path: backend
+      - name: Pull existing image
+        # Pull the image that was pushed by the previous job (different
+        # builder!) so that we can use it as a cache for the subsequent build.
+        run: |
+          docker pull mprooms/${{ matrix.image }}:latest
 
-      - name: Build and push frontend image
+      - name: Build and push ${{ matrix.image }} image
         uses: docker/build-push-action@v1
         with:
           username: mproomsci
           password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
           tag_with_ref: true
           tag_with_sha: true
-          repository: mprooms/frontend
-          path: frontend
-
-      - name: Build and push nginx image
-        uses: docker/build-push-action@v1
-        with:
-          username: mproomsci
-          password: ${{ secrets.DOCKER_MPROOMSCI_TOKEN }}
-          tag_with_ref: true
-          tag_with_sha: true
-          repository: mprooms/nginx
-          path: nginx
+          repository: mprooms/${{ matrix.image }}
+          cache_froms: mprooms/${{ matrix.image }}:latest
+          path: ${{ matrix.image }}
 
   deploy:
     needs: push
@@ -85,6 +64,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Deploy via SSH
         run: |
+          # Be verbose for troubleshooting purposes:
+          set -o xtrace
+
           umask 0077
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY_MPROOMS_VM }}" > ~/.ssh/id_rsa
@@ -96,6 +78,16 @@ jobs:
           # Copy YAML onto target host
           scp docker-compose.yaml ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
 
+          # Prepare .env file for docker-compose on target host
+          cat > .env <<EOF
+          MPROOMS_VERSION=sha-${GITHUB_SHA::7}
+          GATEKEEPER_CLIENT_ID=${{ secrets.GATEKEEPER_CLIENT_ID }}
+          GATEKEEPER_CLIENT_SECRET=${{ secrets.GATEKEEPER_CLIENT_SECRET }}
+          GATEKEEPER_DISCOVERY_URL=${{ secrets.GATEKEEPER_DISCOVERY_URL }}
+          HOST_FQDN=${{ secrets.HOST_FQDN }}
+          ACME_ADMIN_EMAIL=${{ secrets.ACME_ADMIN_EMAIL }}
+          EOF
+          scp .env ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}:
+
           # Deploy current version
-          export MPROOMS_VERSION=sha-${GITHUB_SHA::8}
-          ssh -o SendEnv=MPROOMS_VERSION ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} docker-compose up -d
+          ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} docker-compose up -d
