@@ -40,7 +40,7 @@ jobs:
         # Pull the image that was pushed by the previous job (different
         # builder!) so that we can use it as a cache for the subsequent build.
         run: |
-          docker pull mprooms/${{ matrix.image }}:${GITHUB_SHA::7}
+          docker pull mprooms/${{ matrix.image }}:latest
 
       - name: Build and push ${{ matrix.image }} image
         uses: docker/build-push-action@v1
