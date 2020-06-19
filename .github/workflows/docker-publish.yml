@@ -16,10 +16,17 @@ jobs:
         image: [frontend, backend, nginx]
     steps:
       - uses: actions/checkout@v2
+
+      - name: Pull existing image
+        # Pull the current image to use it as a potential cache source.
+        run: |
+          docker pull mprooms/${{ matrix.image }}:latest
+
       - name: Test ${{ matrix.image }} image build
         uses: docker/build-push-action@v1
         with:
           path: ${{ matrix.image }}
+          cache_froms: mprooms/${{ matrix.image }}:latest
           push: false
 
   push:
@@ -40,7 +47,7 @@ jobs:
         # Pull the image that was pushed by the previous job (different
         # builder!) so that we can use it as a cache for the subsequent build.
         run: |
-          docker pull mprooms/${{ matrix.image }}:${GITHUB_SHA::7}
+          docker pull mprooms/${{ matrix.image }}:latest
 
       - name: Build and push ${{ matrix.image }} image
         uses: docker/build-push-action@v1
@@ -70,7 +77,7 @@ jobs:
           umask 0077
           mkdir ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY_MPROOMS_VM }}" > ~/.ssh/id_rsa
-          echo -e "Host ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}\nUser ubuntu\nStrictHostKeyChecking=no" > ~/.ssh/config
+          echo -e "Host ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }}\nUser ${{ secrets.MASTER_DEPLOYMENT_USERNAME }}\nStrictHostKeyChecking=no" > ~/.ssh/config
 
           # Shut down existing deployment (if possible)
           ssh ${{ secrets.MASTER_DEPLOYMENT_HOSTNAME }} bash -c "'if [[ -f docker-compose.yaml ]]; then docker-compose down --remove-orphans; fi'"
