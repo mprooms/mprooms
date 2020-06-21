@@ -29,44 +29,22 @@
 	import daysState from '../state/days'
 
 	import Header from './Header';
+	import Rooms from './Rooms';
 	import Legend from './Legend';
 	import Reservations from './Reservations'
 	import Reservers from './Reservers'
 </script>
 
 <div id="app">
-	<Header />
 	<div>
-		<input type="text" 
-			placeholder="enter name here" 
+		<input type="text"
+			placeholder="enter name here"
 			on:keyup={e => userState.setName(e.target.value)}
 			value={$userState.name}
 		/>
 	</div>
-	<table>
-		<tr>
-			<th></th>
-			{#each $daysState as day}
-				<td>{day}</td>
-			{/each}
-		</tr>
-		<tr>
-			<th></th>
-			{#each $daysState as day}
-				<td><Reservers day={day} /></td>
-			{/each}
-		</tr>
-		{#each $roomsState as room}
-			<tr>
-				<th>Room {room.name}</th>
-				{#each $daysState as day}
-					<td>
-						<Reservations day={day} roomName={room.name} />
-					</td>
-				{/each}
-			</tr>
-		{/each}
-	</table>
 
+	<Header />
+	<Rooms />
 	<Legend/>
 </div>
