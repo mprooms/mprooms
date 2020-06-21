@@ -7,7 +7,7 @@
 </style>
 
 <script>
-    import reservationsState from './state/reservations'
+    import reservationsState from '../state/reservations'
 
     export let day = null;
 

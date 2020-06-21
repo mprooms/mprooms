@@ -17,14 +17,14 @@
     }
 
     .hasBookedThisRoom {
-        
+
     }
 </style>
 
 <script>
-    import reservationsState from './state/reservations'
-    import userState from './state/user'
-    import matrixState from './state/matrix'
+    import reservationsState from '../state/reservations'
+    import userState from '../state/user'
+    import matrixState from '../state/matrix'
 
     export let day;
     export let roomName;

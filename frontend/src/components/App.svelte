@@ -28,9 +28,9 @@
 </style>
 
 <script>
-	import roomsState from './state/rooms'
-	import userState from './state/user'
-	import daysState from './state/days'
+	import roomsState from '../state/rooms'
+	import userState from '../state/user'
+	import daysState from '../state/days'
 
 	import Reservations from './Reservations'
 	import Reservers from './Reservers'
