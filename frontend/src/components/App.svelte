@@ -45,6 +45,7 @@
 		--table-view-border: 2px solid rgba(82, 118, 142, 1);
 		--table-view-margin: 3.5em;
 
+		font-family: NotoSans, sans-serif;
 		color: rgba(20, 20, 20, 1);
 	}
 
