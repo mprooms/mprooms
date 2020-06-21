@@ -17,6 +17,7 @@
       <p class="color-splash full">full</p>
     </div>
   </div>
+  <button on:click={ () => clickHandler() }>Edit Name</button>
 </footer>
 
 <style>
@@ -28,10 +29,18 @@
     footer > div {
       margin-left: 1em;
     }
+
+    footer > button {
+      margin-right: 1em;
+    }
   }
 
   @media (max-width: 512px) {
     footer {
+      font-size: .8em;
+    }
+
+    button {
       font-size: .8em;
     }
 
@@ -62,6 +71,18 @@
   footer > div {
     display: flex;
     align-items: center;
+  }
+
+  button {
+    border: 1px solid lightgrey;
+    padding: .4em .5em .3em .6em;
+    border-radius: 4px;
+    background: white;
+    font-size: 1em;
+  }
+
+  button:focus {
+    outline-color: green;
   }
 
   .colors {
