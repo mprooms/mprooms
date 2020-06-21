@@ -1,30 +1,26 @@
 <style>
+	:global(:root){
+		--content-max-width: 80em;
+		--app-width: 80%;
+		--app-grid-columns: 4em repeat(auto-fit, minmax(0, 1fr));
+
+		--table-view-border: 2px solid rgba(82, 118, 142, 1);
+		--table-view-margin: 3.5em;
+
+		--color-available: darkgreen;
+		--color-reserved: orange;
+		--color-full: red;
+	}
+
 	#app {
 		width: 80%;
 		margin: 0 auto;
-	}
-
-	#legend td {
-		width: 2rem;
-		height: 2rem;
 	}
 
 	#legend td+td {
 		width: 10rem;
 		height: 2rem;
 	}
-
-	td.available {
-        background-color: darkgreen;
-    }
-
-    td.middleCapacity {
-        background-color: orange
-    }
-
-    td.capacityReached {
-        background-color: red
-    }
 </style>
 
 <script>
@@ -32,6 +28,7 @@
 	import userState from '../state/user'
 	import daysState from '../state/days'
 
+	import Legend from './Legend';
 	import Reservations from './Reservations'
 	import Reservers from './Reservers'
 </script>
@@ -69,26 +66,5 @@
 		{/each}
 	</table>
 
-	<table id="legend">
-		<tr>
-			<td class="available"></td>
-			<td>Room is available</td>
-		</tr>
-		<tr>
-			<td class="middleCapacity"></td>
-			<td>Room already has reservations</td>
-		</tr>
-		<tr>
-			<td class="capacityReached"></td>
-			<td>Room has no space left</td>
-		</tr>
-		<tr>
-			<td>✔️</td>
-			<td>Book room for this day</td>
-		</tr>
-		<tr>
-			<td>❌</td>
-			<td>Cancel your reservation for this day</td>
-		</tr>
-	</table>
+	<Legend/>
 </div>
