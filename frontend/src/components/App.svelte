@@ -28,12 +28,14 @@
 	import userState from '../state/user'
 	import daysState from '../state/days'
 
+	import Header from './Header';
 	import Legend from './Legend';
 	import Reservations from './Reservations'
 	import Reservers from './Reservers'
 </script>
 
 <div id="app">
+	<Header />
 	<div>
 		<input type="text" 
 			placeholder="enter name here" 
