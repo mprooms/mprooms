@@ -31,7 +31,6 @@
 	import Header from './Header';
 	import Rooms from './Rooms';
 	import Legend from './Legend';
-	import Reservations from './Reservations'
 	import Reservers from './Reservers'
 </script>
 

@@ -1,7 +1,8 @@
 <script>
   import { fade } from 'svelte/transition';
 
-  import Reservations from './Reservations.svelte';
+  import Tile from './Tile';
+
   import roomsState from '../state/rooms.js';
 	import daysState from '../state/days.js';
   import columnStore from '../state/columns.js';
@@ -30,7 +31,7 @@
         style="{getGridPosition(indexRoom + 1, indexDay + 2)}"
         in:fade={{delay: getDelay(indexDay, indexRoom)}}
       >
-        <Reservations day={day} roomName={room.name} />
+        <Tile day={day} roomName={room.name} capacity={room.capacity} />
       </div>
     {/each}
 	{/each}
