@@ -1,10 +1,11 @@
 <script>
   import { createEventDispatcher } from 'svelte/internal';
+  import Button from './Button';
 
   const dispatch = createEventDispatcher();
 
-  function clickHandler() {
-    dispatch('clicked', true);
+  function clickHandler(event) {
+    dispatch('editName', true);
   }
 </script>
 
@@ -17,7 +18,9 @@
       <p class="color-splash full">full</p>
     </div>
   </div>
-  <button on:click={ () => clickHandler() }>Edit Name</button>
+  <div>
+    <Button on:click={clickHandler} title="Edit Name" />
+  </div>
 </footer>
 
 <style>
@@ -30,17 +33,13 @@
       margin-left: 1em;
     }
 
-    footer > button {
+    footer > div:last-child {
       margin-right: 1em;
     }
   }
 
   @media (max-width: 512px) {
     footer {
-      font-size: .8em;
-    }
-
-    button {
       font-size: .8em;
     }
 
@@ -73,7 +72,7 @@
     align-items: center;
   }
 
-  button {
+  /* button {
     border: 1px solid lightgrey;
     padding: .4em .5em .3em .6em;
     border-radius: 4px;
@@ -83,7 +82,7 @@
 
   button:focus {
     outline-color: green;
-  }
+  } */
 
   .colors {
     align-items: stretch;

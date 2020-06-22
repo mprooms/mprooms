@@ -32,17 +32,18 @@
   class="tile"
   class:has-booked={data.hasBookedThisRoom}
   class:not-bookable={!data.isBookable}
-  title={data.reservers.join(', ')} on:click={clickHandler}
+  title={data.reservers.join(', ')}
+  on:click={clickHandler}
 >
   <div class="marker {data.state}"/>
   <div class="info">
     <div class="capacity">
-        {data.reservers.length}/{capacity}
+      {data.reservers.length}/{capacity}
     </div>
     <div class="action">
-        {#if data.hasBookedThisRoom}
-            ❌
-        {/if}
+      {#if data.hasBookedThisRoom}
+        ❌
+      {/if}
     </div>
   </div>
 
@@ -66,10 +67,11 @@
     height: calc(100% - 2 * var(--padding) - var(--border-size));
     border-bottom: var(--border);
     border-right: var(--border);
-    font-size: .8em;
+    font-size: .9em;
   }
 
   .tile > p {
+    line-height: 1em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -97,7 +99,7 @@
   .action {
     position: absolute;
     top: .8em;
-    right: .6em;
+    right: .5em;
   }
 
   .capacity {

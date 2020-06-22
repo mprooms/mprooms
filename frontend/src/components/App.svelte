@@ -4,9 +4,9 @@
 	import Name from './Name';
 	import Header from './Header';
 	import Rooms from './Rooms';
-	import Legend from './Legend';
+	import Footer from './Footer';
 
-	const roomsDelay = 200;
+	const roomsFadeDelay = 200;
 	let submitted = false;
 
 	function toggle() {
@@ -18,16 +18,16 @@
 	<Header/>
 
 	{#if submitted}
-		<div in:fade={{delay: roomsDelay}} out:fade>
+		<div in:fade={{delay: roomsFadeDelay}} out:fade>
 			<Rooms/>
 		</div>
 	{/if}
 
-	<Legend on:clicked={() => toggle()}/>
+	<Footer on:editName={toggle}/>
 
 	{#if !submitted}
 		<div class="name" in:fade out:fade>
-			<Name on:submitted={() => toggle()} />
+			<Name on:submitted={toggle} />
 		</div>
 	{/if}
 </div>

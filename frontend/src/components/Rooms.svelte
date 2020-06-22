@@ -9,6 +9,8 @@
 
   const animationDelay = 100;
 
+$: availableDays = $daysState.length > 0 ? $daysState.slice(0, $columnStore) : [];
+
   function getGridPosition(row, column) {
     return `grid-row: ${row}; grid-column: ${column};`;
   }
@@ -16,8 +18,6 @@
   function getDelay(indexDay, indexRoom) {
     return indexDay * animationDelay + indexRoom * animationDelay;
   }
-
-  $: availableDays = $daysState.length > 0 ? $daysState.slice(0, $columnStore) : [];
 </script>
 
 <div class="container">

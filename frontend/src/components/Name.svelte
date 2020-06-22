@@ -1,39 +1,49 @@
 <script>
-	import { createEventDispatcher } from 'svelte/internal';
+  import { createEventDispatcher } from 'svelte/internal';
+
+  import Button from './Button';
   import userState from '../state/user';
 
-	const dispatch = createEventDispatcher();
-  let startToCheck = false;
+  const messageCharacters = 'Only letters and numbers are allowed.';
+  const messageEmpty = 'Name cannot be empty.';
 
-	function handleSubmit() {
-    if ($userState.name.length > 0) {
-      startToCheck = false;
+  const dispatch = createEventDispatcher();
+
+  $: warning = checkName($userState.name);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    if (warning.length < 1) {
       dispatch('submitted', true);
-    } else {
-      startToCheck = true;
     }
   }
 
   function checkName(name) {
-    if (!startToCheck || name.length > 0) {
-      return '';
+    if (name.length < 1) {
+      return messageEmpty;
     }
 
-    return 'Name cannot be empty.';
-  }
+    if (!/^[a-zA-Z0-9]+$/.test(name)) {
+      return messageCharacters;
+    }
 
-  $: warning = checkName($userState.name);
+    return '';
+  }
 </script>
 
 <div class="container">
-  <form on:submit|preventDefault={ () => handleSubmit() }>
+  <form on:submit|preventDefault={handleSubmit}>
     <h4>Please enter your name</h4>
 
-    <input type="text" tabindex="0"
-      placeholder="e.g. prhz"
-      on:keyup={e => userState.setName(e.target.value)}
-      value={$userState.name}
-    />
+    <div>
+      <input type="text" tabindex="0"
+        placeholder="e.g. prhz"
+        on:keyup={e => userState.setName(e.target.value)}
+        value={$userState.name}
+      />
+      <Button on:click={handleSubmit} title="Ok" />
+    </div>
 
     <p>{ warning }</p>
   </form>
@@ -56,10 +66,19 @@
 
   form {
     background: white;
-    padding: 1em 3em 3em;
+    min-height: 9em;
+    padding: 1em 3em 2em;
+    position: relative;
+    top: -3em;
   }
 
-  form p {
+  form > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  form > p {
     color: red;
     font-size: .8em;
   }
@@ -69,6 +88,7 @@
     border: none;
     border-bottom: 1px solid lightslategrey;
     font-size: 1em;
+    margin-right: 1em;
     outline: none;
     padding: .3em 0;
     transition: all .3s ease-out;
