@@ -11,7 +11,7 @@
 
 <footer>
   <div>
-    <h4>Room Availability:</h4>
+    <p>Room Availability:</p>
     <div class="colors">
       <p class="color-splash available">free</p>
       <p class="color-splash taken">taken</p>
@@ -25,7 +25,7 @@
 
 <style>
   @media (max-width: 1024px) {
-    footer h4 {
+    footer div:first-child > p {
       display: none;
     }
 
@@ -48,7 +48,7 @@
     }
   }
 
-  h4 {
+  footer div:first-child > p {
     padding: 0;
     margin-right: 1em;
   }
