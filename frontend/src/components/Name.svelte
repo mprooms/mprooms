@@ -20,11 +20,11 @@
   }
 
   function checkName(name) {
-    if (name.length < 1) {
+    if (!name || name.length < 1) {
       return messageEmpty;
     }
 
-    if (!/^[a-zA-Z0-9]+$/.test(name)) {
+    if (!/^[a-zA-Z0-9äöüß]+$/.test(name)) {
       return messageCharacters;
     }
 
@@ -67,20 +67,21 @@
   form {
     background: white;
     min-height: 9em;
-    padding: 1em 3em 2em;
+    padding: 1em 3em;
     position: relative;
     top: -3em;
   }
 
   form > div {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
   }
 
   form > p {
     color: red;
     font-size: .8em;
+    max-width: 12rem;
   }
 
   input {
@@ -89,6 +90,7 @@
     border-bottom: 1px solid lightslategrey;
     font-size: 1em;
     margin-right: 1em;
+    max-width: 10em;
     outline: none;
     padding: .3em 0;
     transition: all .3s ease-out;

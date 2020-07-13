@@ -4,7 +4,7 @@
 
   const dispatch = createEventDispatcher();
 
-  function clickHandler(event) {
+  function clickHandler() {
     dispatch('editName', true);
   }
 </script>
@@ -72,18 +72,6 @@
     align-items: center;
   }
 
-  /* button {
-    border: 1px solid lightgrey;
-    padding: .4em .5em .3em .6em;
-    border-radius: 4px;
-    background: white;
-    font-size: 1em;
-  }
-
-  button:focus {
-    outline-color: green;
-  } */
-
   .colors {
     align-items: stretch;
     display: flex;
@@ -95,7 +83,7 @@
 
   .colors > p {
     padding: 0 .5em;
-    min-width: 3em;
+    min-width: 2em;
     margin: 0 0 0 1em;
     position: relative;
     text-align: left;

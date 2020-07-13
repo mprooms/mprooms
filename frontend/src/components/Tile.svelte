@@ -1,4 +1,5 @@
 <script>
+  import { fade } from 'svelte/transition';
   import reservationsState from '../state/reservations'
   import userState from '../state/user'
   import matrixState from '../state/matrix'
@@ -31,7 +32,7 @@
 <div
   class="tile"
   class:has-booked={data.hasBookedThisRoom}
-  class:not-bookable={!data.isBookable}
+  class:not-bookable={!data.isBookable && !data.hasBookedThisRoom}
   title={data.reservers.join(', ')}
   on:click={clickHandler}
 >
@@ -42,7 +43,7 @@
     </div>
     <div class="action">
       {#if data.hasBookedThisRoom}
-        ❌
+        <p transition:fade={{ duration: 100 }}>❌</p>
       {/if}
     </div>
   </div>
@@ -57,6 +58,15 @@
     --border-size: 1px;
     --border: var(--border-size) solid rgba(0, 0, 0, .1);
     --padding: 1em;
+    --background-stripes: repeating-linear-gradient(
+      45deg,
+      white,
+      white 4px,
+      rgba(0, 0, 0, .05) 4px,
+      rgba(0, 0, 0, .05) 8px
+    );
+    --transition-fast: 50ms;
+    --transition-slow: 100ms;
   }
 
   .tile {
@@ -68,6 +78,29 @@
     border-bottom: var(--border);
     border-right: var(--border);
     font-size: .9em;
+    background-color: transparent;
+    transition: background-color var(--transition-fast) ease-out;
+  }
+
+  .tile.has-booked {
+    background-color: lightyellow;
+  }
+
+  .tile::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    transition: opacity var(--transition-slow) var(--transition-fast) ease-out;
+    opacity: 0;
+    background-image: var(--background-stripes);
+  }
+
+  .tile.not-bookable::before {
+    opacity: 1;
   }
 
   .tile > p {
@@ -82,24 +115,14 @@
     justify-content: space-between;
   }
 
-  .not-bookable {
-    background: repeating-linear-gradient(
-      45deg,
-      white,
-      white 4px,
-      rgba(0, 0, 0, .05) 4px,
-      rgba(0, 0, 0, .05) 8px
-    );
-  }
-
-  .has-booked {
-    background: lightyellow;
-  }
-
   .action {
     position: absolute;
     top: .8em;
     right: .5em;
+  }
+
+  .action > p {
+    margin: 0;
   }
 
   .capacity {
@@ -112,6 +135,7 @@
     width: 4px;
     left: 0;
     top: 0;
+    transition: background-color var(--transition-slow) ease-out;
   }
 
   div.available {
