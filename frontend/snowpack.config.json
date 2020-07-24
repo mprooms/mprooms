@@ -1,7 +1,9 @@
 {
   "extends": "@snowpack/app-scripts-svelte",
   "scripts": {},
-  "plugins": [],
+  "plugins": [
+    ["@snowpack/plugin-webpack"]
+  ],
   "proxy": {
     "/api": {
       "target": "http://localhost:3000"
