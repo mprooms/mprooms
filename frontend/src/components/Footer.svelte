@@ -1,5 +1,7 @@
 <script>
   import { createEventDispatcher } from 'svelte/internal';
+  
+  import userState from '../state/user';
   import Button from './Button';
 
   const dispatch = createEventDispatcher();
@@ -19,7 +21,7 @@
     </div>
   </div>
   <div>
-    <Button on:click={clickHandler} title="Edit Name" />
+    <Button on:click={clickHandler} title="Edit Name {$userState.name ? `(${$userState.name})` : ''}" />
   </div>
 </footer>
 
