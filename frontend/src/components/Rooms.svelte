@@ -23,7 +23,7 @@ $: availableDays = $daysState.length > 0 ? $daysState.slice(0, $columnStore) : [
 <div class="container">
   {#each $roomsState as room, indexRoom}
     <div style="{getGridPosition(indexRoom + 1, 1)}; align-self: center; justify-self: center;">
-      {room.name}
+      <a name="{room.name}">{room.name}</a>
     </div>
 
     {#each availableDays as day, indexDay}
