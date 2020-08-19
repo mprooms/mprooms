@@ -28,18 +28,18 @@
 </div>
 
 <style>
-	.container {
-		background-color: white;
-		border-bottom: var(--table-view-border);
+  .container {
+    background-color: white;
+    border-bottom: var(--table-view-border);
     display: grid;
     grid-template-columns: var(--app-grid-columns);
     grid-template-rows: auto;
     justify-items: center;
     max-width: var(--content-max-width);
     min-height: var(--table-view-margin);
-		position: fixed;
-		top: 0;
-		width: var(--app-width);
+    position: fixed;
+    top: 0;
+    width: var(--app-width);
     z-index: 1;
   }
 
@@ -61,8 +61,8 @@
   }
 
   @media (max-width: 512px) {
-		.container > div:first-child {
-			visibility: hidden;
-		}
-	}
+    .container > div:first-child {
+      visibility: hidden;
+    }
+  }
 </style>

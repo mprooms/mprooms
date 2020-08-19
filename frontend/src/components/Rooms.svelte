@@ -4,7 +4,7 @@
   import Tile from './Tile';
 
   import roomsState from '../state/rooms.js';
-	import daysState from '../state/days.js';
+  import daysState from '../state/days.js';
   import columnStore from '../state/columns.js';
 
   const animationDelay = 100;
@@ -34,7 +34,7 @@ $: availableDays = $daysState.length > 0 ? $daysState.slice(0, $columnStore) : [
         <Tile day={day} roomName={room.name} capacity={room.capacity} />
       </div>
     {/each}
-	{/each}
+  {/each}
 </div>
 
 <style>
