@@ -1,6 +1,8 @@
 <script>
 	import { fade } from 'svelte/transition';
 
+	import userState from '../state/user';
+
 	import Name from './Name';
 	import Header from './Header';
 	import Rooms from './Rooms';
