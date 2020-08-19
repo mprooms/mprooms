@@ -1,7 +1,7 @@
 import roomsState from './state/rooms'
 import reservationsState from './state/reservations'
 
-import App from "./App.svelte";
+import App from "./components/App";
 
 roomsState.load()
 reservationsState.load()
