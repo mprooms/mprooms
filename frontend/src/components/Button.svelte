@@ -1,9 +1,8 @@
 <script>
   export let title;
-  export let fontSize = '1em';
 </script>
 
-<button on:click styling="font-size: {fontSize}">{title}</button>
+<button on:click>{title}</button>
 
 <style>
   button {
