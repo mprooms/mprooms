@@ -1,63 +1,55 @@
 version: '3'
 services:
-    traefik:
-        image: "traefik:v2.2"
-        container_name: "traefik"
-        depends_on:
-            - gatekeeper
-        command:
-            - "--api.insecure=false"
-            - "--providers.docker=true"
-            - "--entrypoints.websecure.address=:443"
-            - "--entrypoints.web.address=:80"
-            - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
-            - "--certificatesresolvers.myresolver.acme.email=${ACME_ADMIN_EMAIL}"
-            - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-        ports:
-            - "443:443"
-            - "80:80"
-        volumes:
-            - "letsencrypt:/letsencrypt"
-            - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    watchtower:
+        command: --label-enable --cleanup --interval 3600
+        image: containrrr/watchtower
+        restart: unless-stopped
         labels:
-            - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-            - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
-            - "traefik.http.routers.redirs.entrypoints=web"
-            - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+          - "com.centurylinklabs.watchtower.enable=true"
+        network_mode: none
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
     backend:
         image: mprooms/backend:$MPROOMS_VERSION
+        restart: unless-stopped
+        labels:
+            - "com.centurylinklabs.watchtower.enable=true"
         volumes:
             - database:/usr/src/app/db
     frontend:
         image: mprooms/frontend:$MPROOMS_VERSION
+        restart: unless-stopped
+        labels:
+            - "com.centurylinklabs.watchtower.enable=true"
         depends_on:
             - backend
     nginx:
         image: mprooms/nginx:$MPROOMS_VERSION
+        restart: unless-stopped
+        labels:
+            - "com.centurylinklabs.watchtower.enable=true"
         depends_on:
             - backend
             - frontend
     gatekeeper:
         image: keycloak/keycloak-gatekeeper
+        restart: unless-stopped
+        labels:
+            - "com.centurylinklabs.watchtower.enable=true"
         depends_on:
             - nginx
+        ports:
+            - "8443:8443"
         command:
             - "--client-id=${GATEKEEPER_CLIENT_ID}"
             - "--client-secret=${GATEKEEPER_CLIENT_SECRET}"
             - "--discovery-url=${GATEKEEPER_DISCOVERY_URL}"
-            - "--listen=0.0.0.0:3000"
+            - "--listen=0.0.0.0:8443"
             - "--redirection-url=https://${HOST_FQDN}"
             - "--upstream-url=http://nginx:8443"
             - "--scopes=openid,profile,email"
             - "--add-claims=name"
             - "--add-claims=upn"
-        labels:
-            - "traefik.http.routers.my-app.rule=Host(`${HOST_FQDN}`)"
-            - "traefik.http.routers.my-app.entrypoints=websecure"
-            - "traefik.http.routers.my-app.tls=true"
-            - "traefik.http.routers.my-app.tls.certresolver=myresolver"
-            - "traefik.http.services.my-app.loadbalancer.server.port=3000"
 
 volumes:
-    letsencrypt:
     database:
