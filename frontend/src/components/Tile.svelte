@@ -104,7 +104,7 @@
   }
 
   .tile > p {
-    line-height: 1em;
+    line-height: 1.2em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
