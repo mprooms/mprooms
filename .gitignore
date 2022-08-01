@@ -6,4 +6,5 @@ temp/
 .env
 
 backend/node_modules/
+backend/db
 frontend/node_modules/

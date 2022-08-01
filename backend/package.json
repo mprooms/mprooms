@@ -17,7 +17,7 @@
       "express": "^4.17.1",
       "moment": "^2.26.0",
       "reflect-metadata": "^0.1.10",
-      "sqlite3": "^4.0.3",
+      "sqlite3": "^5.0.0",
       "typeorm": "0.2.25"
    },
    "devDependencies": {
