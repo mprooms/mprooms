@@ -9,7 +9,7 @@
 	import Footer from './Footer';
 
 	const roomsFadeDelay = 200;
-	let submitted = !!userState.name;
+	let submitted = !!$userState.name;
 
 	function toggle() {
 		submitted = !submitted;
