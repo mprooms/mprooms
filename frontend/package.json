@@ -6,16 +6,16 @@
     "lint": "eslint . --ext .js,.svelte"
   },
   "devDependencies": {
-    "@snowpack/app-scripts-svelte": "^1.1.0",
+    "@snowpack/app-scripts-svelte": "^1.9.2",
     "@testing-library/jest-dom": "^5.5.0",
     "@testing-library/svelte": "^3.0.0",
     "eslint": "^7.2.0",
     "eslint-plugin-jest": "^23.13.2",
     "eslint-plugin-svelte3": "^2.7.3",
     "jest": "^25.4.0",
+    "serve": "^14.2.0",
     "snowpack": "^2.18.5",
-    "svelte": "^3.21.0",
-    "serve": "^14.2.0"
+    "svelte": "^3.21.0"
   },
   "dependencies": {
     "moment": "^2.26.0"
