@@ -1,55 +1,24 @@
 version: '3'
+
 services:
-    watchtower:
-        command: --label-enable --cleanup --interval 3600
-        image: containrrr/watchtower
-        restart: unless-stopped
-        labels:
-          - "com.centurylinklabs.watchtower.enable=true"
-        network_mode: none
-        volumes:
-          - /var/run/docker.sock:/var/run/docker.sock
     backend:
-        image: mprooms/backend:$MPROOMS_VERSION
-        restart: unless-stopped
-        labels:
-            - "com.centurylinklabs.watchtower.enable=true"
+        build:
+            context: backend
         volumes:
             - database:/usr/src/app/db
     frontend:
-        image: mprooms/frontend:$MPROOMS_VERSION
-        restart: unless-stopped
-        labels:
-            - "com.centurylinklabs.watchtower.enable=true"
+        build:
+            context: frontend
         depends_on:
             - backend
     nginx:
-        image: mprooms/nginx:$MPROOMS_VERSION
-        restart: unless-stopped
-        labels:
-            - "com.centurylinklabs.watchtower.enable=true"
+        build:
+            context: nginx
+        ports:
+            - 8443:8443
         depends_on:
             - backend
             - frontend
-    gatekeeper:
-        image: keycloak/keycloak-gatekeeper
-        restart: unless-stopped
-        labels:
-            - "com.centurylinklabs.watchtower.enable=true"
-        depends_on:
-            - nginx
-        ports:
-            - "8443:8443"
-        command:
-            - "--client-id=${GATEKEEPER_CLIENT_ID}"
-            - "--client-secret=${GATEKEEPER_CLIENT_SECRET}"
-            - "--discovery-url=${GATEKEEPER_DISCOVERY_URL}"
-            - "--listen=0.0.0.0:8443"
-            - "--redirection-url=https://${HOST_FQDN}"
-            - "--upstream-url=http://nginx:8443"
-            - "--scopes=openid,profile,email"
-            - "--add-claims=name"
-            - "--add-claims=upn"
 
 volumes:
     database:
